@@ -1,50 +1,116 @@
-# Welcome to your Expo app 👋
+# POSKO Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+POSKO Mobile adalah aplikasi mobile berbasis Expo React Native untuk membantu pencatatan bantuan bencana. Aplikasi ini digunakan untuk mengelola data barang bantuan, kategori, donatur, penerima, bantuan masuk, distribusi bantuan, dan laporan riwayat transaksi.
 
-## Get started
+## Fitur Utama
 
-1. Install dependencies
+* Login pengguna
+* Dashboard POSKO
+* Data Barang
+* Data Kategori
+* Data Donatur
+* Data Penerima
+* Input Bantuan Masuk
+* Input Distribusi Bantuan
+* Laporan Bantuan Masuk dan Keluar
+* Profile dan Logout
 
-   ```bash
-   npm install
-   ```
+## Teknologi
 
-2. Start the app
+* Expo React Native
+* Expo Router
+* TypeScript
+* Supabase
+* React Native Safe Area Context
+* FontAwesome Icons
 
-   ```bash
-   npx expo start
-   ```
+## Cara Menjalankan Project
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Clone repository:
 
 ```bash
-npm run reset-project
+git clone https://github.com/kholifah075/agen_posko_apk-main.git
+cd agen_posko_apk-main
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Install dependency:
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Jalankan project:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npx expo start -c
+```
 
-## Join the community
+Scan QR Code menggunakan aplikasi Expo Go di HP.
 
-Join our community of developers creating universal apps.
+## Konfigurasi Supabase
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Pastikan project sudah terhubung dengan Supabase. File konfigurasi berada di:
+
+```txt
+lib/supabase.ts
+```
+
+Jika menggunakan `.env`, buat file `.env` dengan format berikut:
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=isi_url_supabase
+EXPO_PUBLIC_SUPABASE_ANON_KEY=isi_anon_key_supabase
+```
+
+## Tabel Supabase yang Dibutuhkan
+
+Aplikasi ini membutuhkan tabel berikut:
+
+* user
+* kategori
+* barang
+* donatur
+* penerima
+* incoming
+* incoming_detail
+* outgoing
+* outgoing_detail
+
+Kolom tambahan yang diperlukan:
+
+* `incoming.donatur_id`
+* `incoming.keterangan`
+* `outgoing.penerima_id`
+* `outgoing.keterangan`
+
+## Catatan Database
+
+Saat ini stok masih mengikuti tabel `kategori`, bukan stok per barang. Jadi beberapa barang dalam kategori yang sama akan menampilkan stok kategori yang sama.
+
+Jika ingin stok lebih akurat per barang, perlu menambahkan kolom `stok` pada tabel `barang`, lalu mengubah logic Bantuan Masuk dan Distribusi agar update stok barang, bukan stok kategori.
+
+## Alur Aplikasi
+
+1. User login.
+2. User masuk ke Dashboard POSKO.
+3. User dapat mengelola data master: Barang, Kategori, Donatur, dan Penerima.
+4. User mencatat Bantuan Masuk dari Donatur.
+5. User mencatat Distribusi Bantuan ke Penerima.
+6. User melihat riwayat transaksi pada halaman Laporan.
+7. User dapat logout melalui halaman Profile.
+
+## Branch Utama
+
+Project ini menggunakan branch utama:
+
+```txt
+main
+```
+
+Pastikan selalu menjalankan:
+
+```bash
+git pull origin main
+```
+
+sebelum mulai mengerjakan perubahan baru.
