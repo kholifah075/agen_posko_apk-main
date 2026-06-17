@@ -1,381 +1,400 @@
-import { useSession } from '@/ctx';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { router, usePathname } from 'expo-router';
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { router, usePathname } from "expo-router";
 import {
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 
-export default function Index() {
+type MenuItem = {
+  title: string;
+  desc: string;
+  icon: string;
+  route: string;
+};
 
-  const { signOut } = useSession();
+type MenuSection = {
+  title: string;
+  desc: string;
+  items: MenuItem[];
+};
 
+export default function Fitur() {
   const pathname = usePathname();
-  return (
-    <SafeAreaView style={styles.container}>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 100
-        }}
+  const menuSections: MenuSection[] = [
+    {
+      title: "Data Master",
+      desc: "Kelola data dasar yang digunakan dalam proses bantuan.",
+      items: [
+        {
+          title: "Barang",
+          desc: "Data barang bantuan",
+          icon: "box-open",
+          route: "/barang",
+        },
+        {
+          title: "Kategori",
+          desc: "Kategori dan stok",
+          icon: "boxes",
+          route: "/kategori",
+        },
+        {
+          title: "Donatur",
+          desc: "Pemberi bantuan",
+          icon: "hand-holding-heart",
+          route: "/donatur",
+        },
+        {
+          title: "Penerima",
+          desc: "Tujuan bantuan",
+          icon: "users",
+          route: "/penerima",
+        },
+      ],
+    },
+    {
+      title: "Transaksi Bantuan",
+      desc: "Catat bantuan masuk dan bantuan keluar dari posko.",
+      items: [
+        {
+          title: "Bantuan Masuk",
+          desc: "Input dari donatur",
+          icon: "arrow-down",
+          route: "/bantuan-masuk/tambah",
+        },
+        {
+          title: "Distribusi",
+          desc: "Kirim ke penerima",
+          icon: "truck",
+          route: "/distribusi/tambah",
+        },
+      ],
+    },
+    {
+      title: "Monitoring",
+      desc: "Pantau riwayat dan ringkasan aktivitas bantuan.",
+      items: [
+        {
+          title: "Laporan",
+          desc: "Riwayat bantuan",
+          icon: "file-alt",
+          route: "/laporan",
+        },
+        {
+          title: "Dashboard",
+          desc: "Ringkasan POSKO",
+          icon: "chart-line",
+          route: "/admin",
+        },
+      ],
+    },
+  ];
+
+  const MenuCard = ({ item }: { item: MenuItem }) => {
+    return (
+      <TouchableOpacity
+        style={styles.menuCard}
+        onPress={() => router.push(item.route as any)}
+        activeOpacity={0.85}
       >
-
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.welcome}>
-            Selamat Datang 👋
-          </Text>
-
-          <Text style={styles.title}>
-            Admin Pengiriman
-          </Text>
-
-          <Text style={styles.subTitle}>
-            Kelola data barang dan distribusi bantuan
-          </Text>
+        <View style={styles.menuIcon}>
+          <FontAwesome5 name={item.icon as any} size={20} color="#0ea5e9" />
         </View>
 
-        {/* Menu */}
-        <View style={styles.grid}>
-
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => router.push('/admin/kirim')}
-          >
-            <View style={styles.iconBox}>
-              <FontAwesome5
-                name="truck"
-                size={26}
-                color="#0ea5e9"
-              />
-            </View>
-
-            <Text style={styles.cardTitle}>
-              Kirim
-            </Text>
-
-            <Text style={styles.cardDesc}>
-              Kelola pengiriman
-            </Text>
-
-          </TouchableOpacity>
-
-
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => router.push('/admin/barang')}
-          >
-            <View style={styles.iconBox}>
-              <FontAwesome5
-                name="dolly-flatbed"
-                size={26}
-                color="#0ea5e9"
-              />
-            </View>
-
-            <Text style={styles.cardTitle}>
-              Barang
-            </Text>
-
-            <Text style={styles.cardDesc}>
-              Data inventaris
-            </Text>
-
-          </TouchableOpacity>
-
-
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => router.push('/admin/kategori')}
-          >
-            <View style={styles.iconBox}>
-              <FontAwesome5
-                name="boxes"
-                size={26}
-                color="#0ea5e9"
-              />
-            </View>
-
-            <Text style={styles.cardTitle}>
-              Kategori
-            </Text>
-
-            <Text style={styles.cardDesc}>
-              Kelompok barang
-            </Text>
-
-          </TouchableOpacity>
-
-
-          <TouchableOpacity
-            style={[
-              styles.card,
-              styles.logoutCard
-            ]}
-            onPress={() => {
-              signOut();
-              router.replace("/sign-in");
-            }}
-          >
-
-            <View style={styles.logoutIcon}>
-              <FontAwesome5
-                name="door-open"
-                size={24}
-                color="#ef4444"
-              />
-            </View>
-
-            <Text style={styles.cardTitle}>
-              Logout
-            </Text>
-
-            <Text style={styles.cardDesc}>
-              Keluar aplikasi
-            </Text>
-
-          </TouchableOpacity>
-
+        <View style={{ flex: 1 }}>
+          <Text style={styles.menuTitle}>{item.title}</Text>
+          <Text style={styles.menuDesc}>{item.desc}</Text>
         </View>
 
-      </ScrollView>
+        <FontAwesome5 name="chevron-right" size={13} color="#94a3b8" />
+      </TouchableOpacity>
+    );
+  };
 
+  return (
+    <SafeAreaView edges={["top"]} style={styles.container}>
+      <StatusBar style="dark" />
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
+          <View style={styles.header}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.headerSmall}>Menu Fitur</Text>
+              <Text style={styles.headerTitle}>Kelola POSKO</Text>
+              <Text style={styles.headerDesc}>
+                Pilih modul untuk mengelola data bantuan, transaksi, dan laporan.
+              </Text>
+            </View>
 
-      {/* Bottom Menu */}
+            <View style={styles.headerIcon}>
+              <FontAwesome5 name="th-large" size={32} color="white" />
+            </View>
+          </View>
 
-<View style={styles.bottomNav}>
+          <View style={styles.quickPanel}>
+            <Text style={styles.quickTitle}>Aksi utama</Text>
 
-  {/* Dashboard */}
-  <TouchableOpacity
-    style={styles.navItem}
-    onPress={() =>
-      router.replace("/(app)/admin")
-    }
-  >
+            <View style={styles.quickRow}>
+              <TouchableOpacity
+                style={styles.quickButton}
+                onPress={() => router.push("/bantuan-masuk/tambah")}
+              >
+                <FontAwesome5 name="arrow-down" size={18} color="#0ea5e9" />
+                <Text style={styles.quickText}>Masuk</Text>
+              </TouchableOpacity>
 
-    <FontAwesome5
-      name="home"
-      size={20}
-      color={
-        pathname === "/(app)/admin"
-          ? "#1E88E5"
-          : "gray"
-      }
-    />
+              <TouchableOpacity
+                style={styles.quickButton}
+                onPress={() => router.push("/distribusi/tambah")}
+              >
+                <FontAwesome5 name="truck" size={18} color="#0ea5e9" />
+                <Text style={styles.quickText}>Distribusi</Text>
+              </TouchableOpacity>
 
-    <Text
-      style={
-        pathname === "/(app)/admin"
-          ? styles.activeText
-          : styles.navText
-      }
-    >
-      Dashboard
-    </Text>
+              <TouchableOpacity
+                style={styles.quickButton}
+                onPress={() => router.push("/laporan")}
+              >
+                <FontAwesome5 name="file-alt" size={18} color="#0ea5e9" />
+                <Text style={styles.quickText}>Laporan</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-  </TouchableOpacity>
+          {menuSections.map((section) => (
+            <View key={section.title} style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <View>
+                  <Text style={styles.sectionTitle}>{section.title}</Text>
+                  <Text style={styles.sectionDesc}>{section.desc}</Text>
+                </View>
+              </View>
 
+              <View style={styles.sectionCard}>
+                {section.items.map((item, index) => (
+                  <View key={item.title}>
+                    <MenuCard item={item} />
 
-  {/* Fitur */}
-  <TouchableOpacity
-    style={styles.navItem}
-    onPress={() =>
-      router.replace("/fitur")
-    }
-  >
+                    {index !== section.items.length - 1 && (
+                      <View style={styles.divider} />
+                    )}
+                  </View>
+                ))}
+              </View>
+            </View>
+          ))}
+        </ScrollView>
 
-    <FontAwesome5
-      name="th-large"
-      size={20}
-      color={
-        pathname === "/fitur"
-          ? "#1E88E5"
-          : "gray"
-      }
-    />
+        <View style={styles.bottomNav}>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => router.replace("/admin")}
+          >
+            <FontAwesome5
+              name="home"
+              size={20}
+              color={pathname === "/admin" ? "#1E88E5" : "#64748b"}
+            />
+          </TouchableOpacity>
 
-    <Text
-      style={
-        pathname === "/fitur"
-          ? styles.activeText
-          : styles.navText
-      }
-    >
-      Fitur
-    </Text>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => router.replace("/fitur")}
+          >
+            <FontAwesome5
+              name="th-large"
+              size={20}
+              color={pathname === "/fitur" ? "#1E88E5" : "#64748b"}
+            />
+          </TouchableOpacity>
 
-  </TouchableOpacity>
-
-
-  {/* Profile */}
-  <TouchableOpacity
-    style={styles.navItem}
-    onPress={() =>
-      router.replace("/profile")
-    }
-  >
-
-    <FontAwesome5
-      name="user"
-      size={20}
-      color={
-        pathname === "/profile"
-          ? "#1E88E5"
-          : "gray"
-      }
-    />
-
-    <Text
-      style={
-        pathname === "/profile"
-          ? styles.activeText
-          : styles.navText
-      }
-    >
-      Profile
-    </Text>
-
-  </TouchableOpacity>
-
-</View>
-
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => router.replace("/profile")}
+          >
+            <FontAwesome5
+              name="user"
+              size={20}
+              color={pathname === "/profile" ? "#1E88E5" : "#64748b"}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const cardShadow = {
+  shadowColor: "#000",
+  shadowOpacity: 0.08,
+  shadowRadius: 8,
+  elevation: 5,
+};
 
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f1f5f9"
+    backgroundColor: "#f1f5f9",
   },
-
+  content: {
+    padding: 18,
+    paddingBottom: 135,
+  },
   header: {
     backgroundColor: "#0ea5e9",
-    padding: 30,
-    borderBottomLeftRadius: 35,
-    borderBottomRightRadius: 35,
-    marginBottom: 25
-  },
-
-  welcome: {
-    color: "#e0f2fe",
-    fontSize: 15
-  },
-
-  title: {
-    color: "white",
-    fontSize: 26,
-    fontWeight: "bold",
-    marginTop: 5
-  },
-
-  subTitle: {
-    color: "#e0f2fe",
-    marginTop: 8
-  },
-
-  grid: {
-    paddingHorizontal: 20,
+    borderRadius: 28,
+    padding: 24,
+    marginBottom: 16,
     flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between"
+    alignItems: "center",
+    ...cardShadow,
   },
-
-  card: {
-    width: "47%",
+  headerSmall: {
+    color: "#dbeafe",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  headerTitle: {
+    color: "white",
+    fontSize: 28,
+    fontWeight: "900",
+    marginTop: 6,
+  },
+  headerDesc: {
+    color: "#e0f2fe",
+    fontSize: 14,
+    marginTop: 8,
+    lineHeight: 20,
+  },
+  headerIcon: {
+    width: 62,
+    height: 62,
+    borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 12,
+  },
+  quickPanel: {
     backgroundColor: "white",
-    padding: 20,
-    borderRadius: 20,
-    marginBottom: 18,
-
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
-    elevation: 5
+    borderRadius: 22,
+    padding: 16,
+    marginBottom: 20,
+    ...cardShadow,
   },
-
-  iconBox: {
-    width: 55,
-    height: 55,
-    borderRadius: 18,
+  quickTitle: {
+    color: "#0f172a",
+    fontSize: 16,
+    fontWeight: "900",
+    marginBottom: 13,
+  },
+  quickRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  quickButton: {
+    flex: 1,
     backgroundColor: "#e0f2fe",
-
-    justifyContent: "center",
+    borderRadius: 16,
+    paddingVertical: 14,
     alignItems: "center",
-
-    marginBottom: 15
-  },
-
-  logoutIcon: {
-    width: 55,
-    height: 55,
-    borderRadius: 18,
-    backgroundColor: "#fee2e2",
-
     justifyContent: "center",
-    alignItems: "center",
-
-    marginBottom: 15
+    gap: 7,
   },
-
-  cardTitle: {
-    fontSize: 17,
-    fontWeight: "bold"
-  },
-
-  cardDesc: {
+  quickText: {
+    color: "#0369a1",
     fontSize: 12,
-    color: "gray",
-    marginTop: 5
+    fontWeight: "900",
   },
-
-  logoutCard: {
-    borderWidth: 1,
-    borderColor: "#fecaca"
+  section: {
+    marginBottom: 20,
   },
-
+  sectionHeader: {
+    marginBottom: 11,
+  },
+  sectionTitle: {
+    color: "#0f172a",
+    fontSize: 19,
+    fontWeight: "900",
+  },
+  sectionDesc: {
+    color: "#64748b",
+    fontSize: 13,
+    marginTop: 4,
+    lineHeight: 18,
+  },
+  sectionCard: {
+    backgroundColor: "white",
+    borderRadius: 22,
+    overflow: "hidden",
+    ...cardShadow,
+  },
+  menuCard: {
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  menuIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: "#e0f2fe",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 13,
+  },
+  menuTitle: {
+    color: "#0f172a",
+    fontSize: 15,
+    fontWeight: "900",
+  },
+  menuDesc: {
+    color: "#64748b",
+    fontSize: 12,
+    marginTop: 4,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#f1f5f9",
+    marginLeft: 77,
+  },
   bottomNav: {
     position: "absolute",
     bottom: 0,
-    width: "100%",
+    left: 0,
+    right: 0,
     backgroundColor: "white",
-
     flexDirection: "row",
     justifyContent: "space-around",
-
-    paddingVertical: 15,
-
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 10
+    paddingTop: 10,
+    paddingBottom: 24,
+    borderTopLeftRadius: 26,
+    borderTopRightRadius: 26,
+    ...cardShadow,
   },
-
   navItem: {
+    width: 54,
+    height: 54,
+    borderRadius: 18,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
-
   navText: {
     fontSize: 11,
     marginTop: 4,
-    color: "#64748b"
+    color: "#64748b",
   },
-
   activeText: {
     fontSize: 11,
     marginTop: 4,
     color: "#1E88E5",
-    fontWeight: "bold"
-  }
-
+    fontWeight: "bold",
+  },
 });

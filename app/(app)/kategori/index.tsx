@@ -225,7 +225,7 @@ styles.editBtn
 
 onPress={()=>
 router.push(
-`/admin/kategori/${item.id}`
+`/kategori/${item.id}`
 )
 }
 >
@@ -277,7 +277,7 @@ color="white"
 style={styles.fab}
 onPress={()=>
 router.push(
-"/admin/kategori/tambah"
+"/kategori/tambah"
 )
 }
 >

@@ -50,11 +50,11 @@ export default function Index() {
   }, [fetchItems]);
 
   const tambahBarang = () => {
-    router.push('/admin/barang/tambah');
+    router.push('/barang/tambah');
   };
 
   const editBarang = (id: number) => {
-    router.push(`/admin/barang/${id}`);
+    router.push(`/barang/${id}`);
   };
 
   const hapusBarang = async (id: number) => {
