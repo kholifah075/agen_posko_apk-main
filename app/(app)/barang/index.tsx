@@ -1,3 +1,4 @@
+import { useSession } from "@/ctx";
 import { supabase } from "@/lib/supabase";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { router } from "expo-router";
@@ -29,6 +30,8 @@ type Barang = {
 };
 
 export default function BarangIndex() {
+  const { user } = useSession();
+  const isAdmin = Boolean(user?.is_admin);
   const [barang, setBarang] = useState<Barang[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -132,6 +135,10 @@ export default function BarangIndex() {
   };
 
   const hapusBarang = (id: number) => {
+    if (!isAdmin) {
+      Alert.alert("Akses ditolak", "Petugas tidak memiliki akses untuk menghapus barang.");
+      return;
+    }
     Alert.alert("Hapus Barang", "Yakin ingin menghapus data barang ini?", [
       {
         text: "Batal",

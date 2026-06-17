@@ -1,48 +1,7 @@
-import { createContext, use, type PropsWithChildren } from 'react';
+import { createContext, useContext, useMemo, type PropsWithChildren } from "react";
+import { useStorageState } from "./useStorageState";
 
-import { useStorageState } from './useStorageState';
-
-const AuthContext = createContext<{
-  signIn: () => void;
-  signOut: () => void;
-  session?: string | null;
-  isLoading: boolean;
-}>({
-  signIn: () => null,
-  signOut: () => null,
-  session: null,
-  isLoading: false,
-});
-
-// Use this hook to access the user info.
-export function useSession() {
-  const value = use(AuthContext);
-  if (!value) {
-    throw new Error('useSession must be wrapped in a <SessionProvider />');
-  }
-
-  return value;
-}
-
-export function SessionProvider({ children }: PropsWithChildren) {
-    const [[isLoading, session], setSession] = useStorageState('session');
-
-    return (
-        <AuthContext.Provider
-            value={{
-                signIn: () => {
-                    setSession('xxx');
-                },
-                signOut: () => {
-                    setSession(null);
-                },
-                session,
-                isLoading,
-            }}>
-        {children}
-        </AuthContext.Provider>
-    );
-}export type PoskoUser = {
+export type PoskoUser = {
   id?: number;
   username?: string | null;
   password?: string | null;
@@ -50,48 +9,57 @@ export function SessionProvider({ children }: PropsWithChildren) {
   created_at?: string | null;
   role?: string | null;
   [key: string]: any;
-};mport { createContext, use, type PropsWithChildren } from 'react';
+};
 
-import { useStorageState } from './useStorageState';
-
-const AuthContext = createContext<{
-  signIn: () => void;
+type AuthContextType = {
+  signIn: (userData: PoskoUser) => void;
   signOut: () => void;
   session?: string | null;
+  user?: PoskoUser | null;
   isLoading: boolean;
-}>({
-  signIn: () => null,
-  signOut: () => null,
-  session: null,
-  isLoading: false,
-});
+};
 
-// Use this hook to access the user info.
+const AuthContext = createContext<AuthContextType | null>(null);
+
 export function useSession() {
-  const value = use(AuthContext);
+  const value = useContext(AuthContext);
+
   if (!value) {
-    throw new Error('useSession must be wrapped in a <SessionProvider />');
+    throw new Error("useSession must be wrapped in a SessionProvider");
   }
 
   return value;
 }
 
 export function SessionProvider({ children }: PropsWithChildren) {
-    const [[isLoading, session], setSession] = useStorageState('session');
+  const [[isLoading, session], setSession] = useStorageState("session");
 
-    return (
-        <AuthContext.Provider
-            value={{
-                signIn: () => {
-                    setSession('xxx');
-                },
-                signOut: () => {
-                    setSession(null);
-                },
-                session,
-                isLoading,
-            }}>
-        {children}
-        </AuthContext.Provider>
-    );
+  const user = useMemo(() => {
+    if (!session) return null;
+
+    try {
+      return JSON.parse(session) as PoskoUser;
+    } catch (error) {
+      console.log("Session parse error:", error);
+      return null;
+    }
+  }, [session]);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        signIn: (userData: PoskoUser) => {
+          setSession(JSON.stringify(userData));
+        },
+        signOut: () => {
+          setSession(null);
+        },
+        session,
+        user,
+        isLoading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }

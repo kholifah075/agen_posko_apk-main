@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { useSession } from "@/ctx";
 
 type MenuItem = {
   title: string;
@@ -25,6 +26,8 @@ type MenuSection = {
 
 export default function Fitur() {
   const pathname = usePathname();
+  const { user } = useSession();
+  const isAdmin = Boolean(user?.is_admin);
 
   const menuSections: MenuSection[] = [
     {
@@ -94,6 +97,25 @@ export default function Fitur() {
       ],
     },
   ];
+
+  const visibleMenuSections = menuSections
+    .map((section) => {
+      if (section.title !== "Data Master") {
+        return section;
+      }
+
+      return {
+        ...section,
+        desc: isAdmin
+          ? section.desc
+          : "Petugas hanya dapat melihat daftar barang bantuan.",
+        items: section.items.filter((item) => {
+          if (isAdmin) return true;
+          return item.route === "/barang";
+        }),
+      };
+    })
+    .filter((section) => section.items.length > 0);
 
   const MenuCard = ({ item }: { item: MenuItem }) => {
     return (
@@ -168,7 +190,7 @@ export default function Fitur() {
             </View>
           </View>
 
-          {menuSections.map((section) => (
+          {visibleMenuSections.map((section) => (
             <View key={section.title} style={styles.section}>
               <View style={styles.sectionHeader}>
                 <View>
