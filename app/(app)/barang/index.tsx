@@ -51,17 +51,9 @@ export default function BarangIndex() {
     });
   }, [barang, search]);
 
-  const totalStokKategori = useMemo(() => {
-    const kategoriMap = new Map<number, number>();
-
-    barang.forEach((item) => {
-      if (item.kategori?.id) {
-        kategoriMap.set(item.kategori.id, Number(item.kategori.stok || 0));
-      }
-    });
-
-    return Array.from(kategoriMap.values()).reduce((total, stok) => {
-      return total + stok;
+  const totalStokBarang = useMemo(() => {
+    return barang.reduce((total, item) => {
+      return total + Number(item.stok || 0);
     }, 0);
   }, [barang]);
 
@@ -174,7 +166,7 @@ export default function BarangIndex() {
         <Text style={styles.small}>Data Master</Text>
         <Text style={styles.title}>Barang Tersedia</Text>
         <Text style={styles.subtitle}>
-          Lihat daftar barang bantuan, kategori, satuan, dan stok kategori.
+          Lihat daftar barang bantuan, kategori, satuan, dan stok barang.
         </Text>
 
         <View style={styles.summaryRow}>
@@ -184,7 +176,7 @@ export default function BarangIndex() {
           </View>
 
           <View style={styles.summaryBox}>
-            <Text style={styles.summaryNumber}>{totalStokKategori}</Text>
+            <Text style={styles.summaryNumber}>{totalStokBarang}</Text>
             <Text style={styles.summaryLabel}>Total Stok</Text>
           </View>
         </View>
@@ -248,13 +240,13 @@ export default function BarangIndex() {
 
                   <View style={styles.stokBadge}>
                     <Text style={styles.stokLabel}>Stok</Text>
-                    <Text style={styles.stokValue}>{item.kategori?.stok || 0}</Text>
+                    <Text style={styles.stokValue}>{item.stok || 0}</Text>
                   </View>
                 </View>
 
                 <View style={styles.cardBottom}>
                   <Text style={styles.noteText}>
-                    Stok mengikuti kategori barang terkait.
+                    Stok spesifik untuk barang ini.
                   </Text>
 
                   <View style={styles.action}>

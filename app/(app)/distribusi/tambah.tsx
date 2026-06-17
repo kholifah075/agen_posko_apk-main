@@ -304,6 +304,16 @@ export default function TambahDistribusi() {
         return false;
       }
 
+      const stokBarang = Number(selectedBarang.stok || 0);
+
+      if (jumlah > stokBarang) {
+        Alert.alert(
+          "Stok Tidak Cukup",
+          `Stok barang ${selectedBarang.nama} hanya ${stokBarang}, sedangkan jumlah distribusi ${jumlah}.`
+        );
+        return false;
+      }
+
       const stokKategori = Number(selectedBarang.kategori?.stok || 0);
       const current = kategoriPemakaian.get(kategoriId);
 
@@ -519,7 +529,7 @@ export default function TambahDistribusi() {
                       Kategori: {selectedBarang.kategori?.nama || "-"}
                     </Text>
                     <Text style={styles.infoText}>
-                      Stok kategori: {selectedBarang.kategori?.stok || 0}
+                      Stok barang: {selectedBarang.stok || 0}
                     </Text>
                     <Text style={styles.infoText}>
                       Satuan: {selectedBarang.satuan || "-"}
